@@ -80,7 +80,7 @@ abstract class ManagingContextController<T : UI<*>> private constructor(
     createUI: () -> T,
     navigateBackAction: () -> Boolean = { false }
 ) : ContextController<T>(context, createUI, navigateBackAction), ManagingController  {
-  constructor(fragment: Fragment, createUI: () -> T) : this(fragment.context, createUI, {
+  constructor(fragment: Fragment, createUI: () -> T) : this(fragment.activity, createUI, {
     fragment.fragmentManager.popBackStack()
     true
   })
