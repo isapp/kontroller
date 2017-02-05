@@ -3,4 +3,14 @@ if(!project.hasProperty('BINTRAY_KEY')) project.ext.BINTRAY_KEY = System.getenv(
 if(!project.hasProperty('ARTIFACT_GROUP')) project.ext.ARTIFACT_GROUP = 'com.isapp.kontroller'
 if(!project.hasProperty('BINTRAY_REPO')) project.ext.BINTRAY_REPO = 'kontroller'
 if(!project.hasProperty('BINTRAY_ORG')) project.ext.BINTRAY_ORG = 'isapp'
-if(!project.hasProperty('ARTIFACT_VERSION')) project.ext.ARTIFACT_VERSION = '0.0.2' + (System.getenv('TRAVIS_BRANCH').equals("release") ? '' : "-SNAPSHOT")
+
+if(!project.hasProperty('ARTIFACT_VERSION')) project.ext.ARTIFACT_VERSION = loadVersion() + (System.getenv('TRAVIS_BRANCH').equals("release") ? '' : "-SNAPSHOT")
+
+public String loadVersion() {
+  File propsFile = rootProject.file('version.properties')
+  Properties versionProperties = new Properties()
+  propsFile.newDataInputStream().withCloseable {
+    versionProperties.load(it)
+  }
+  return versionProperties.getProperty('VERSION')
+}
