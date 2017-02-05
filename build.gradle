@@ -40,3 +40,5 @@ subprojects {
     }
   }
 }
+
+apply from: "${rootDir.getAbsolutePath()}/gradle/scripts/version_bump.gradle"
