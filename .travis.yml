@@ -29,6 +29,7 @@ cache:
 branches:
   only:
     - master
+    - release
 
 install: echo "skip 'gradle assemble' step"
 
