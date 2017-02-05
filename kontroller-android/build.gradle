@@ -34,7 +34,13 @@ dependencies {
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   compile 'com.android.support:support-annotations:25.1.1'
 
+  testCompile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   testCompile 'junit:junit:4.12'
+  testCompile 'org.robolectric:robolectric:3.2.2'
+  testCompile 'org.mockito:mockito-core:2.7.2'
+  testCompile('com.nhaarman:mockito-kotlin:1.2.0') {
+    exclude group: "org.mockito"
+  }
 }
 
 apply from: "https://raw.githubusercontent.com/eygraber/bintray-gradle-scripts/master/bintray.gradle"
