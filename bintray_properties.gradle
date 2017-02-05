@@ -1,0 +1,3 @@
+if(!project.hasProperty('ARTIFACT_GROUP')) project.ext.ARTIFACT_GROUP = 'com.isapp.kontroller'
+if(!project.hasProperty('BINTRAY_REPO')) project.ext.BINTRAY_REPO = 'kontroller'
+if(!project.hasProperty('BINTRAY_ORG')) project.ext.BINTRAY_ORG = 'isapp'
