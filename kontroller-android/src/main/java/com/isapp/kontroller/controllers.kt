@@ -110,3 +110,37 @@ abstract class ManagingContextController<T : UI<*>> private constructor(
     super<ContextController>.destroy()
   }
 }
+
+class ControllerActivityCallbacks<out T : UIController>(
+    private val controller: T
+) {
+  fun onCreate(activity: Activity) {
+    controller.initialize()
+    controller.createView()?.apply {
+      controller.uiReady()
+      activity.setContentView(this)
+    }
+  }
+
+  fun onResume() = controller.start()
+  fun onBackPressed() = controller.navigateBack()
+  fun onPause() = controller.stop()
+  fun onDestroy() = controller.destroy()
+}
+
+class ControllerFragmentCallbacks<out T : UIController>(
+    private val controller: T
+) {
+  fun onCreateView(): View? {
+    controller.initialize()
+    val view = controller.createView()?.apply {
+      controller.uiReady()
+    }
+    return view
+  }
+
+  fun onResume() = controller.start()
+  fun onBackPressed() = controller.navigateBack()
+  fun onPause() = controller.stop()
+  fun onDestroyView() = controller.destroy()
+}
