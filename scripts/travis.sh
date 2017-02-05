@@ -1,8 +1,8 @@
 #!/bin/bash
 set -ev
-gradlew check
+./gradlew check
 if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
   if [ "${TRAVIS_BRANCH}" = "master" ]; then
-	gradlew deployToBintraySnapshot
+	./gradlew deployToBintraySnapshot
   fi
 fi
