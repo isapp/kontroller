@@ -2,14 +2,6 @@ task bumpVersion {
   doLast {
     PrintStream console = System.out
 
-    if(!runProcess('git', 'checkout', 'master')) {
-      throw new IllegalStateException('Could not checkout master')
-    }
-
-    if(!runProcess('git', 'pull', '--rebase')) {
-      throw new IllegalStateException('Could not pull latest for master')
-    }
-
     File propsFile = rootProject.file('version.properties')
     Properties versionProperties = new Properties()
     propsFile.newDataInputStream().withCloseable {
@@ -31,78 +23,8 @@ task bumpVersion {
       versionProperties.store(it, 'This file is automatically managed; please do not modify')
     }
 
-    runProcess('git', 'config', 'user.name', 'isapp-ci')
-
-    if(!runProcess('git', 'add', propsFile.absolutePath)) {
-      String error = "Could not run 'git add ${propsFile.absolutePath}'"
-      console.println(error)
-      throw new RuntimeException(error)
-    }
-
-    if(!runProcess('git', 'commit', '-m', "Bump version")) {
-      runProcess('git', 'reset', '--hard')
-      String error = "Could not run 'git commit -m'"
-      console.println(error)
-      throw new RuntimeException(error)
-    }
-
-    if(!runProcess('git', 'push', "https://isapp-ci:${System.getenv('GITHUB_TOKEN')}@github.com/isapp/kontroller.git", 'head', '-q')) {
-      runProcess('git', 'reset', 'HEAD~1', '--hard')
-      String error = "Could not run 'git push origin head'"
-      console.println(error)
-      throw new RuntimeException(error)
-    }
-
-    if(!runProcess('git', 'tag', "$newVersion")) {
-      console.println("Couldn't tag new version")
-    }
-    else {
-      if(!runProcess('git', 'push', 'origin', '--tags')) {
-        console.println("Couldn't push tag for new version")
-      }
-    }
-  }
-}
-
-def boolean runProcess(String... cmd) {
-  System.out.println("\n${cmd.join(' ')}")
-
-  Process p = new ProcessBuilder(cmd)
-    .redirectErrorStream(true)
-    .start()
-
-  OutputStreamConsumer osConsumer = new OutputStreamConsumer(p.inputStream)
-  osConsumer.start()
-  OutputStreamConsumer errConsumer = new OutputStreamConsumer(p.errorStream)
-  errConsumer.start()
-
-  int ret = p.waitFor()
-  p.destroy()
-
-  osConsumer.join()
-  errConsumer.join()
-
-  osConsumer.close()
-  errConsumer.close()
-
-  return ret == 0
-}
-
-class OutputStreamConsumer extends Thread {
-  private final BufferedReader is
-
-  public OutputStreamConsumer(InputStream is) {
-    this.is = new BufferedReader(new InputStreamReader(is))
-  }
-
-  @Override
-  public void run() {
-    is.eachLine {
-      System.out.println(it)
-    }
-  }
-
-  public void close() {
-    try { is.close() } catch(Exception ignore) {}
+    // write the new version to a file that can be easily parsed for a tag
+    File versionFileForTag = rootProject.file("version")
+    versionFileForTag.write(newVersion)
   }
 }
