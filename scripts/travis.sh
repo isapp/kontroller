@@ -8,7 +8,10 @@ if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
 	  ./gradlew deployToBintraySnapshot
 	fi
   elif [ "${TRAVIS_BRANCH}" = "release" ]; then
-    ./gradlew deployToBintray
+      ./gradlew deployToBintray
+      git tag "$(< version)"
+      git push https://isapp-ci:${GITHUB_TOKEN}@github.com/isapp/kontroller.git --tags -q
+
       git config user.email "ci@isapp.com"
       git config user.name "isapp-ci"
       git remote set-branches origin 'master'
@@ -20,8 +23,6 @@ if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
       git add version
       git commit -m "Bump version"
       git push https://isapp-ci:${GITHUB_TOKEN}@github.com/isapp/kontroller.git master -q
-      git tag "$(< version)"
-      git push https://isapp-ci:${GITHUB_TOKEN}@github.com/isapp/kontroller.git --tags -q
   fi
 else
   ./gradlew check
