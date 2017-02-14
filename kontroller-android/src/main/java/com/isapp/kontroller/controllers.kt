@@ -44,7 +44,7 @@ interface UIController<out T : UI<*>> : Controller {
   fun navigateBack(): Boolean
 }
 
-abstract class ContextController<T : UI<*>> protected constructor(
+abstract class AndroidUIController<T : UI<*>> protected constructor(
     protected val context: Context,
     private val createUI: () -> T,
     private val navigateBackAction: () -> Boolean = { false }
@@ -70,11 +70,11 @@ abstract class ContextController<T : UI<*>> protected constructor(
   }
 }
 
-abstract class ManagingContextController<T : UI<*>> private constructor(
+abstract class ManagingAndroidUIController<T : UI<*>> private constructor(
     context: Context,
     createUI: () -> T,
     navigateBackAction: () -> Boolean = { false }
-) : ContextController<T>(context, createUI, navigateBackAction), ManagingController  {
+) : AndroidUIController<T>(context, createUI, navigateBackAction), ManagingController  {
   constructor(fragment: Fragment, createUI: () -> T) : this(fragment.activity, createUI, {
     fragment.fragmentManager.popBackStack()
     true
@@ -84,25 +84,25 @@ abstract class ManagingContextController<T : UI<*>> private constructor(
   @CallSuper
   override fun initialize() {
     super<ManagingController>.initialize()
-    super<ContextController>.initialize()
+    super<AndroidUIController>.initialize()
   }
 
   @CallSuper
   override fun start() {
     super<ManagingController>.start()
-    super<ContextController>.start()
+    super<AndroidUIController>.start()
   }
 
   @CallSuper
   override fun stop() {
     super<ManagingController>.stop()
-    super<ContextController>.stop()
+    super<AndroidUIController>.stop()
   }
 
   @CallSuper
   override fun destroy() {
     super<ManagingController>.destroy()
-    super<ContextController>.destroy()
+    super<AndroidUIController>.destroy()
   }
 }
 

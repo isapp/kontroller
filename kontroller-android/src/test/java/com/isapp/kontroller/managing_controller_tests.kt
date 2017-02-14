@@ -53,8 +53,8 @@ class ManagingControllerTest {
 }
 
 @RunWith(RobolectricTestRunner::class)
-class ManagingContextControllerTest {
-  private val subject = TestManagingContextController(mock(), { mock() })
+class ManagingAndroidUIControllerTest {
+  private val subject = TestManagingAndroidUIController(mock(), { mock() })
 
   @Test
   fun initialize_callsInitializeAndManagedControllerInitialize() {
