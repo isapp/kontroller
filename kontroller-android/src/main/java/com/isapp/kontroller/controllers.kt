@@ -37,8 +37,9 @@ interface ManagingController : Controller {
   }
 }
 
-interface UIController : Controller {
-  fun createView(): View?
+interface UIController<out T : UI<*>> : Controller {
+  val ui: T?
+
   fun uiReady()
   fun navigateBack(): Boolean
 }
@@ -47,14 +48,14 @@ abstract class ContextController<T : UI<*>> protected constructor(
     protected val context: Context,
     private val createUI: () -> T,
     private val navigateBackAction: () -> Boolean = { false }
-) : UIController {
+) : UIController<T> {
   constructor(fragment: Fragment, createUI: () -> T) : this(fragment.context, createUI, {
     fragment.fragmentManager.popBackStack()
     true
   })
   constructor(activity: Activity, createUI: () -> T) : this(activity as Context, createUI)
 
-  protected var ui: T? = null
+  override var ui: T? = null
   override fun uiReady() {}
   override fun navigateBack() = navigateBackAction()
 
@@ -63,16 +64,10 @@ abstract class ContextController<T : UI<*>> protected constructor(
     ui = createUI()
   }
 
-  override fun createView(): View? {
-    return coerceCreateView<UIController, UI<UIController>>()
-  }
-
   @CallSuper
   override fun destroy() {
     ui = null
   }
-
-  private inline fun <reified THIS : UIController, reified UIType : UI<THIS>> coerceCreateView() = (ui as? UIType)?.createView(this as THIS)
 }
 
 abstract class ManagingContextController<T : UI<*>> private constructor(
@@ -111,12 +106,12 @@ abstract class ManagingContextController<T : UI<*>> private constructor(
   }
 }
 
-class ControllerActivityCallbacks<out T : UIController>(
+class ControllerActivityCallbacks<in T : R, out R : UIController<U>, out U : UI<T>>(
     private val controller: T
 ) {
   fun onCreate(activity: Activity) {
     controller.initialize()
-    controller.createView()?.apply {
+    controller.ui?.createView(controller)?.apply {
       controller.uiReady()
       activity.setContentView(this)
     }
@@ -128,12 +123,12 @@ class ControllerActivityCallbacks<out T : UIController>(
   fun onDestroy() = controller.destroy()
 }
 
-class ControllerFragmentCallbacks<out T : UIController>(
+class ControllerFragmentCallbacks<in T : R, R : UIController<U>, out U : UI<R>>(
     private val controller: T
 ) {
   fun onCreateView(): View? {
     controller.initialize()
-    val view = controller.createView()?.apply {
+    val view = controller.ui?.createView(controller)?.apply {
       controller.uiReady()
     }
     return view

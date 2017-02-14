@@ -10,29 +10,33 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.util.ActivityController
 
 @RunWith(RobolectricTestRunner::class)
 class ControllerActivityTest {
   companion object {
-    private val mockController = mock<UIController>()
+    private val mockUI = mock<TestUI>()
+    private val mockController = mock<TestController>()
     private val mockView = mock<View>()
   }
 
-  private lateinit var activityController: org.robolectric.util.ActivityController<TestActivityControllerActivity>
+  private lateinit var activityController: ActivityController<TestActivityControllerActivity>
 
   @Before
   fun beforeTest() {
     activityController = Robolectric.buildActivity(TestActivityControllerActivity::class.java)
-    whenever(mockController.createView()).doReturn(mockView)
+    whenever(mockController.ui).doReturn(mockUI)
+    whenever(mockUI.createView(any())).doReturn(mockView)
   }
 
   @Test
   fun onCreate_callsInitialize_thenCreateView_thenUIReady() {
     activityController.create()
 
-    inOrder(mockController) {
+    inOrder(mockController, mockUI) {
       verify(mockController).initialize()
-      verify(mockController).createView()
+      verify(mockController).ui
+      verify(mockUI).createView(mockController)
       verify(mockController).uiReady()
     }
 
@@ -41,12 +45,13 @@ class ControllerActivityTest {
 
   @Test
   fun onCreate_ifThereIsNoView_callsInitialize_thenCreateView_butNotUIReady() {
-    whenever(mockController.createView()).doReturn(null as View?)
+    whenever(mockUI.createView(any())).doReturn(null as View?)
     activityController.create()
 
-    inOrder(mockController) {
+    inOrder(mockController, mockUI) {
       verify(mockController).initialize()
-      verify(mockController).createView()
+      verify(mockController).ui
+      verify(mockUI).createView(mockController)
       verify(mockController, never()).uiReady()
     }
 
@@ -57,9 +62,10 @@ class ControllerActivityTest {
   fun onStart_callsNothingAfterUIReady() {
     activityController.create().start()
 
-    inOrder(mockController) {
+    inOrder(mockController, mockUI) {
       verify(mockController).initialize()
-      verify(mockController).createView()
+      verify(mockController).ui
+      verify(mockUI).createView(mockController)
       verify(mockController).uiReady()
     }
 
@@ -70,9 +76,10 @@ class ControllerActivityTest {
   fun onResume_callsStart() {
     activityController.create().start().resume()
 
-    inOrder(mockController) {
+    inOrder(mockController, mockUI) {
       verify(mockController).initialize()
-      verify(mockController).createView()
+      verify(mockController).ui
+      verify(mockUI).createView(mockController)
       verify(mockController).uiReady()
       verify(mockController).start()
     }
@@ -84,9 +91,10 @@ class ControllerActivityTest {
   fun onBackPressed_callsNavigateBack() {
     activityController.create().start().resume().get().onBackPressed()
 
-    inOrder(mockController) {
+    inOrder(mockController, mockUI) {
       verify(mockController).initialize()
-      verify(mockController).createView()
+      verify(mockController).ui
+      verify(mockUI).createView(mockController)
       verify(mockController).uiReady()
       verify(mockController).start()
       verify(mockController).navigateBack()
@@ -99,9 +107,10 @@ class ControllerActivityTest {
   fun onPause_callsStop() {
     activityController.create().start().resume().pause()
 
-    inOrder(mockController) {
+    inOrder(mockController, mockUI) {
       verify(mockController).initialize()
-      verify(mockController).createView()
+      verify(mockController).ui
+      verify(mockUI).createView(mockController)
       verify(mockController).uiReady()
       verify(mockController).start()
       verify(mockController).stop()
@@ -114,9 +123,10 @@ class ControllerActivityTest {
   fun onStop_callsNothingAfterStop() {
     activityController.create().start().resume().pause().stop()
 
-    inOrder(mockController) {
+    inOrder(mockController, mockUI) {
       verify(mockController).initialize()
-      verify(mockController).createView()
+      verify(mockController).ui
+      verify(mockUI).createView(mockController)
       verify(mockController).uiReady()
       verify(mockController).start()
       verify(mockController).stop()
@@ -129,9 +139,10 @@ class ControllerActivityTest {
   fun onDestroy_callsDestroy() {
     activityController.create().start().resume().pause().destroy()
 
-    inOrder(mockController) {
+    inOrder(mockController, mockUI) {
       verify(mockController).initialize()
-      verify(mockController).createView()
+      verify(mockController).ui
+      verify(mockUI).createView(mockController)
       verify(mockController).uiReady()
       verify(mockController).start()
       verify(mockController).stop()
@@ -143,6 +154,7 @@ class ControllerActivityTest {
 
   @After
   fun afterTest() {
+    reset(mockUI)
     reset(mockController)
     reset(mockView)
   }

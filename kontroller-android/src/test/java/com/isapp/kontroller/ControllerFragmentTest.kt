@@ -16,7 +16,8 @@ import org.robolectric.util.FragmentController
 @RunWith(RobolectricTestRunner::class)
 class ControllerFragmentTest {
   companion object {
-    private val mockController = mock<UIController>()
+    private val mockUI = mock<TestUI>()
+    private val mockController = mock<TestController>()
     private val mockView = mock<View>()
   }
 
@@ -25,16 +26,18 @@ class ControllerFragmentTest {
   @Before
   fun beforeTest() {
     fragmentController = FragmentController.of(TestFragmentControllerFragment())
-    whenever(mockController.createView()).doReturn(mockView)
+    whenever(mockController.ui).doReturn(mockUI)
+    whenever(mockUI.createView(any())).doReturn(mockView)
   }
 
   @Test
   fun onCreateView_callsInitialize_thenCreateView_thenUIReady() {
     fragmentController.create().start()
 
-    inOrder(mockController) {
+    inOrder(mockController, mockUI) {
       verify(mockController).initialize()
-      verify(mockController).createView()
+      verify(mockController).ui
+      verify(mockUI).createView(mockController)
       verify(mockController).uiReady()
     }
 
@@ -43,12 +46,13 @@ class ControllerFragmentTest {
 
   @Test
   fun onCreateView_ifThereIsNoView_callsInitialize_thenCreateView_butNotUIReady() {
-    whenever(mockController.createView()).doReturn(null as View?)
+    whenever(mockUI.createView(any())).doReturn(null as View?)
     fragmentController.create().start()
 
-    inOrder(mockController) {
+    inOrder(mockController, mockUI) {
       verify(mockController).initialize()
-      verify(mockController).createView()
+      verify(mockController).ui
+      verify(mockUI).createView(mockController)
       verify(mockController, never()).uiReady()
     }
 
@@ -59,9 +63,10 @@ class ControllerFragmentTest {
   fun onResume_callsStart() {
     fragmentController.create().start().resume()
 
-    inOrder(mockController) {
+    inOrder(mockController, mockUI) {
       verify(mockController).initialize()
-      verify(mockController).createView()
+      verify(mockController).ui
+      verify(mockUI).createView(mockController)
       verify(mockController).uiReady()
       verify(mockController).start()
     }
@@ -73,9 +78,10 @@ class ControllerFragmentTest {
   fun onBackPressed_callsNavigateBack() {
     fragmentController.create().start().resume().get().onBackPressed()
 
-    inOrder(mockController) {
+    inOrder(mockController, mockUI) {
       verify(mockController).initialize()
-      verify(mockController).createView()
+      verify(mockController).ui
+      verify(mockUI).createView(mockController)
       verify(mockController).uiReady()
       verify(mockController).start()
       verify(mockController).navigateBack()
@@ -88,9 +94,10 @@ class ControllerFragmentTest {
   fun onPause_callsStop() {
     fragmentController.create().start().resume().pause()
 
-    inOrder(mockController) {
+    inOrder(mockController, mockUI) {
       verify(mockController).initialize()
-      verify(mockController).createView()
+      verify(mockController).ui
+      verify(mockUI).createView(mockController)
       verify(mockController).uiReady()
       verify(mockController).start()
       verify(mockController).stop()
@@ -103,9 +110,10 @@ class ControllerFragmentTest {
   fun onStop_callsNothingAfterStop() {
     fragmentController.create().start().resume().pause().stop()
 
-    inOrder(mockController) {
+    inOrder(mockController, mockUI) {
       verify(mockController).initialize()
-      verify(mockController).createView()
+      verify(mockController).ui
+      verify(mockUI).createView(mockController)
       verify(mockController).uiReady()
       verify(mockController).start()
       verify(mockController).stop()
@@ -118,9 +126,10 @@ class ControllerFragmentTest {
   fun onDestroy_callsDestroy() {
     fragmentController.create().start().resume().pause().destroy()
 
-    inOrder(mockController) {
+    inOrder(mockController, mockUI) {
       verify(mockController).initialize()
-      verify(mockController).createView()
+      verify(mockController).ui
+      verify(mockUI).createView(mockController)
       verify(mockController).uiReady()
       verify(mockController).start()
       verify(mockController).stop()
@@ -132,6 +141,7 @@ class ControllerFragmentTest {
 
   @After
   fun afterTest() {
+    reset(mockUI)
     reset(mockController)
     reset(mockView)
   }
