@@ -15,4 +15,4 @@ public String loadVersion() {
   return versionProperties.getProperty('VERSION')
 }
 
-project.ext.USE_DOKKA = true
+// project.ext.USE_DOKKA = true
