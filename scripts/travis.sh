@@ -5,10 +5,10 @@ if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
     if [ "${TRAVIS_COMMIT_MESSAGE}" = "Version bump" ]; then
 	  echo "Skipping version bump commit"
 	else
-	  ./gradlew deployToBintraySnapshot
+	  ./gradlew deployToBintraySnapshot --stacktrace
 	fi
   elif [ "${TRAVIS_BRANCH}" = "release" ]; then
-      ./gradlew deployToBintray
+      ./gradlew deployToBintray --stacktrace
       git tag "$(< version)"
       git push https://isapp-ci:${GITHUB_TOKEN}@github.com/isapp/kontroller.git --tags -q
 
@@ -18,12 +18,12 @@ if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
       git fetch --depth=1 origin master
       git checkout master
       git pull --rebase
-      ./gradlew bumpVersion
+      ./gradlew bumpVersion --stacktrace
       git add version.properties
       git add version
       git commit -m "Bump version"
       git push https://isapp-ci:${GITHUB_TOKEN}@github.com/isapp/kontroller.git master -q
   fi
 else
-  ./gradlew check
+  ./gradlew check --stacktrace
 fi
