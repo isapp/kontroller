@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.dokka-android'
 
 buildscript {
   dependencies {
@@ -27,6 +28,18 @@ android {
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
+  }
+}
+
+dokka {
+  outputFormat = 'javadoc'
+  outputDirectory = "$buildDir/javadoc"
+  processConfigurations = ['compile', 'provided']
+
+  linkMapping {
+    dir = "src/main/java"
+    url = "https://github.com/isapp/kontroller/blob/master/kontroller-anko/src/main/java"
+    suffix = "#L"
   }
 }
 
