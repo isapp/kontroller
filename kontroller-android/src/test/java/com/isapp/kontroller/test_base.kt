@@ -37,8 +37,8 @@ class TestManagingController : ManagingController {
   }
 }
 
-interface TestContextUI : UI<TestManagingContextController>
-class TestManagingContextController(activity: Activity, createUI: () -> TestContextUI) : ManagingContextController<TestContextUI>(activity, createUI) {
+interface TestAndroidUI : UI<TestManagingAndroidUIController>
+class TestManagingAndroidUIController(activity: Activity, createUI: () -> TestAndroidUI) : ManagingAndroidUIController<TestAndroidUI>(activity, createUI) {
   override val managedControllers = listOf(testManagedController)
 
   override fun initialize() {
