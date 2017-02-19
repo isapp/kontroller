@@ -1,0 +1,52 @@
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath 'com.android.tools.build:gradle:2.2.3'
+    classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.6'
+  }
+}
+
+allprojects {
+  repositories {
+    jcenter()
+  }
+
+  buildscript {
+    repositories {
+      jcenter()
+    }
+  }
+}
+
+task clean(type: Delete) {
+  delete rootProject.buildDir
+}
+
+ext {
+  kotlinVersion = '1.0.6'
+  supportLibVersion = '25.1.1'
+
+  buildToolsVersion = '25.0.2'
+  compileSdk = 25
+  targetSdk = 25
+  minSdk = 14
+}
+
+ext.deps = [
+  kotlin : "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion",
+  appCompat : "com.android.support:appcompat-v7:$supportLibVersion"
+]
+
+project.ext.preDexLibs = !(System.getenv("CI") ?: "false" .toBoolean())
+
+subprojects {
+  project.plugins.whenPluginAdded { plugin ->
+    if ("com.android.build.gradle.AppPlugin".equals(plugin.class.name)) {
+      project.android.dexOptions.preDexLibraries = rootProject.ext.preDexLibs
+    } else if ("com.android.build.gradle.LibraryPlugin".equals(plugin.class.name)) {
+      project.android.dexOptions.preDexLibraries = rootProject.ext.preDexLibs
+    }
+  }
+}
