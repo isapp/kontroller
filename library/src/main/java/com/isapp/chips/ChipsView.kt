@@ -1,8 +1,10 @@
 package com.isapp.chips
 
 import android.content.Context
+import android.graphics.Rect
 import android.support.annotation.StyleRes
 import android.support.v4.widget.TextViewCompat
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
@@ -57,6 +59,63 @@ class ChipsView : RecyclerView {
       }
     }
   }}
+
+  fun Context.dip(value: Int): Int = (value * resources.displayMetrics.density).toInt()
+
+  fun useFreeFormScrollingLayout(maxColumns: Int) = synchronized(this) {
+    layoutManager = GridLayoutManager(context, maxColumns).apply {
+      spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+        override fun getSpanSize(position: Int): Int {
+          val parentWidth = width
+
+          val holder = getChildAt(position)?.let {
+            getChildViewHolder(it)  as? ChipsViewHolder
+          }
+
+          val textPaint = if(holder == null) {
+            TextView(context).let {
+              adapter?.textAppearance?.let { textAppearance ->
+                TextViewCompat.setTextAppearance(it, textAppearance)
+              }
+              it.paint
+            }
+          }
+          else {
+            holder.text.paint
+          }
+
+          val chip = adapter?.chips?.get(position) ?: Chip(Any(), "")
+
+          val text = chip.text
+          val rect = Rect()
+          textPaint.getTextBounds(text, 0, text.length, rect)
+
+          // add padding and margins + icon widths
+          val childWidth = if(chip.deletable && chip.icon) {
+            (rect.width() + context.dip(80)).toFloat()
+          }
+          else if(chip.deletable && !chip.icon) {
+            (rect.width() + context.dip(55)).toFloat()
+          }
+          else if(!chip.deletable && chip.icon) {
+            (rect.width() + context.dip(60)).toFloat()
+          }
+          else {
+            (rect.width() + context.dip(35)).toFloat()
+          }
+
+          val widthPerSpan = parentWidth.toFloat() / spanCount.toFloat()
+          return Math.ceil(childWidth / widthPerSpan.toDouble()).toInt()
+        }
+      }
+
+      spanSizeLookup.isSpanIndexCacheEnabled = true
+
+      addItemDecoration(GridSpacingItemDecoration(10))
+    }
+    adapter = adapter?.let(::ChipsAdapter) ?: ChipsAdapter()
+    swapAdapter(adapter, true)
+  }
 
   fun useHorizontalScrollingLayout() = synchronized(this) {
     layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -137,4 +196,10 @@ private class ChipsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
   val icon = view.findViewById(android.R.id.icon1) as? ImageView
   val text = view.findViewById(android.R.id.text1) as TextView
   val delete = view.findViewById(android.R.id.icon2) as? ImageView
+}
+
+class GridSpacingItemDecoration(private val spacing: Int) : RecyclerView.ItemDecoration() {
+  override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State?) {
+    outRect.bottom = spacing // item top
+  }
 }

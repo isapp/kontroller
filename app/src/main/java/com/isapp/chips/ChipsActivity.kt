@@ -11,7 +11,7 @@ import java.util.*
 class ChipsActivity : AppCompatActivity() {
   private lateinit var chips: ChipsView
   private lateinit var fab: FloatingActionButton
-  private var counter = 0
+  private var freeForm = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -41,6 +41,17 @@ class ChipsActivity : AppCompatActivity() {
     fab.setOnClickListener({ view ->
       chips.addChip(Chip(UUID.randomUUID().toString().take(Random().nextInt(32 - 2 + 1) + 2), deletable = randomBool(), icon = randomBool()))
     })
+
+    fab.setOnLongClickListener {
+      if(freeForm) {
+        chips.useHorizontalScrollingLayout()
+      }
+      else {
+        chips.useFreeFormScrollingLayout(5)
+      }
+      freeForm = !freeForm
+      true
+    }
   }
 
 }
