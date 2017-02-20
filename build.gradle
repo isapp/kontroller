@@ -36,7 +36,9 @@ ext {
 
 ext.deps = [
   kotlin : "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion",
-  appCompat : "com.android.support:appcompat-v7:$supportLibVersion"
+  appCompat : "com.android.support:appcompat-v7:$supportLibVersion",
+  design: "com.android.support:design:$supportLibVersion",
+  recyclerView: "com.android.support:recyclerview-v7:$supportLibVersion"
 ]
 
 project.ext.preDexLibs = !(System.getenv("CI") ?: "false" .toBoolean())
