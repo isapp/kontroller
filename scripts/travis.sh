@@ -2,7 +2,7 @@
 set -ev
 if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
   if [ "${TRAVIS_BRANCH}" = "master" ]; then
-    if [ "${TRAVIS_COMMIT_MESSAGE}" = "Version bump" ]; then
+    if [ "${TRAVIS_COMMIT_MESSAGE}" = "Bump version" ]; then
 	  echo "Skipping version bump commit"
 	else
 	  ./gradlew deployToBintraySnapshot --stacktrace
