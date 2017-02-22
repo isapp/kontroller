@@ -1,0 +1,2 @@
+if(!project.hasProperty('BINTRAY_PACKAGE')) project.ext.BINTRAY_PACKAGE = 'chips'
+if(!project.hasProperty('DESCRIPTION')) project.ext.DESCRIPTION = 'A material chip implementation'

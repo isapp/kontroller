@@ -41,7 +41,7 @@ ext.deps = [
   recyclerView: "com.android.support:recyclerview-v7:$supportLibVersion"
 ]
 
-project.ext.preDexLibs = !(System.getenv("CI") ?: "false" .toBoolean())
+project.ext.preDexLibs = !(System.getenv("CI") ?: false)
 
 subprojects {
   project.plugins.whenPluginAdded { plugin ->
@@ -52,3 +52,5 @@ subprojects {
     }
   }
 }
+
+apply from: "${rootDir.getAbsolutePath()}/gradle/scripts/version_bump.gradle"

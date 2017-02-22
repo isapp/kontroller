@@ -1,0 +1,30 @@
+task bumpVersion {
+  doLast {
+    PrintStream console = System.out
+
+    File propsFile = rootProject.file('version.properties')
+    Properties versionProperties = new Properties()
+    propsFile.newDataInputStream().withCloseable {
+      versionProperties.load(it)
+    }
+
+    String originalVersion = versionProperties.getProperty('VERSION')
+    if(!originalVersion) {
+      throw new IllegalStateException('VERSION is not defined in version.properties')
+    }
+
+    console.println("Current version: ${originalVersion}")
+
+    String[] versionSplit = originalVersion.split('\\.')
+    String newVersion = "${versionSplit[0]}.${versionSplit[1]}.${versionSplit[2].toInteger() + 1}"
+
+    versionProperties.setProperty('VERSION', newVersion)
+    propsFile.newDataOutputStream().withCloseable {
+      versionProperties.store(it, 'This file is automatically managed; please do not modify')
+    }
+
+    // write the new version to a file that can be easily parsed for a tag
+    File versionFileForTag = rootProject.file("version")
+    versionFileForTag.write(newVersion)
+  }
+}
