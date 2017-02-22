@@ -26,5 +26,5 @@ dependencies {
   compile deps.appCompat
   compile deps.design
 
-  compile project(":library")
+  compile project(':chips')
 }
