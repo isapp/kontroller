@@ -24,4 +24,7 @@ android {
 dependencies {
   compile deps.kotlin
   compile deps.appCompat
+  compile deps.design
+
+  compile project(":library")
 }

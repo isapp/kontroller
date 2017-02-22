@@ -1,3 +1,4 @@
 <resources>
   <string name="app_name">Chips</string>
+  <string name="title_activity_chips">ChipsActivity</string>
 </resources>
