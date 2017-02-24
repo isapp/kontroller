@@ -8,6 +8,9 @@ import android.support.annotation.CallSuper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import java.util.*
+
+private val managedControllersLookup = IdentityHashMap<Controller, ManagingController>()
 
 /**
  * A `Controller` provides a simple lifecycle to build an abstraction around complex logic.
@@ -73,7 +76,15 @@ interface ManagingController : Controller {
 
   @CallSuper
   override fun initialize() {
-    managedControllers.forEach { it.initialize() }
+    managedControllers.forEach {
+      // throw if a different ManagingController is already managing this Controller
+      val managingController = managedControllersLookup.getOrPut(it, { this })
+      if(managingController != this) {
+        throw IllegalStateException("$it is already managed by $managingController")
+      }
+
+      it.initialize()
+    }
   }
 
   @CallSuper
@@ -88,7 +99,10 @@ interface ManagingController : Controller {
 
   @CallSuper
   override fun destroy() {
-    managedControllers.forEach { it.destroy() }
+    managedControllers.forEach {
+      managedControllersLookup.remove(it)
+      it.destroy()
+    }
   }
 }
 
