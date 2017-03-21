@@ -1,14 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-  ext.kotlin_version = '1.0.6'
+  ext.kotlin_version = '1.1.1'
 
   repositories {
     jcenter()
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:2.2.3'
+    classpath 'com.android.tools.build:gradle:2.3.0'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     // classpath 'org.jetbrains.dokka:dokka-android-gradle-plugin:0.9.13'
   }
@@ -34,9 +34,9 @@ project.ext.preDexLibs = !(System.getenv("CI") ?: "false" .toBoolean())
 
 subprojects {
   project.plugins.whenPluginAdded { plugin ->
-    if ("com.android.build.gradle.AppPlugin".equals(plugin.class.name)) {
+    if ("com.android.build.gradle.AppPlugin" == plugin.class.name) {
       project.android.dexOptions.preDexLibraries = rootProject.ext.preDexLibs
-    } else if ("com.android.build.gradle.LibraryPlugin".equals(plugin.class.name)) {
+    } else if ("com.android.build.gradle.LibraryPlugin" == plugin.class.name) {
       project.android.dexOptions.preDexLibraries = rootProject.ext.preDexLibs
     }
   }
