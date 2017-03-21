@@ -8,7 +8,8 @@ import android.support.annotation.CallSuper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import java.util.*
+import java.util.IdentityHashMap
+import android.support.v4.app.Fragment as SupportFragment
 
 private val managedControllersLookup = IdentityHashMap<Controller, ManagingController>()
 
@@ -162,11 +163,11 @@ abstract class AndroidUIController<T : UI<*>> protected constructor(
     private val createUI: () -> T,
     private val navigateBackAction: () -> Boolean = { false }
 ) : UIController<T> {
-  constructor(fragment: Fragment, createUI: () -> T) : this(fragment.context, createUI, {
+  constructor(fragment: Fragment, createUI: () -> T) : this(fragment.activity, createUI, {
     fragment.fragmentManager.popBackStack()
     true
   })
-  constructor(fragment: android.support.v4.app.Fragment, createUI: () -> T) : this(fragment.context, createUI, {
+  constructor(fragment: SupportFragment, createUI: () -> T) : this(fragment.activity, createUI, {
     fragment.fragmentManager.popBackStack()
     true
   })
@@ -196,6 +197,10 @@ abstract class ManagingAndroidUIController<T : UI<*>> private constructor(
     navigateBackAction: () -> Boolean = { false }
 ) : AndroidUIController<T>(context, createUI, navigateBackAction), ManagingController  {
   constructor(fragment: Fragment, createUI: () -> T) : this(fragment.activity, createUI, {
+    fragment.fragmentManager.popBackStack()
+    true
+  })
+  constructor(fragment: SupportFragment, createUI: () -> T) : this(fragment.activity, createUI, {
     fragment.fragmentManager.popBackStack()
     true
   })
@@ -393,7 +398,7 @@ abstract class ControllerFragment<C : UIController<U>, out U : UI<C>> : Fragment
 /**
  * A convenience [android.support.v4.app.Fragment] for managing a [UIController].
  */
-abstract class ControllerSupportFragment<C : UIController<U>, out U : UI<C>> : android.support.v4.app.Fragment(), OnBackPressed {
+abstract class ControllerSupportFragment<C : UIController<U>, out U : UI<C>> : SupportFragment(), OnBackPressed {
   protected abstract val controller: C
   private lateinit var callbacks: ControllerFragmentCallbacks<C, C, U>
 
