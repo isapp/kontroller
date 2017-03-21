@@ -15,7 +15,7 @@ if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
       git config user.email "ci@isapp.com"
       git config user.name "isapp-ci"
       git remote set-branches origin 'master'
-      git fetch --depth=1 origin master
+      git fetch origin master
       git checkout master
       git pull --rebase
       ./gradlew bumpVersion --stacktrace
