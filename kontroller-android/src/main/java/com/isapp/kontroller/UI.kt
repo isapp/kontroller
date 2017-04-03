@@ -16,4 +16,9 @@ interface UI<in T> {
    * @param controller an interface to the `Controller`
    */
   fun createView(controller: T): View?
+
+  /**
+   * Provides an opportunity to clean up views, remove listeners, etc...
+   */
+  fun destroyView() {}
 }
