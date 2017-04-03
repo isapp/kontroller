@@ -184,6 +184,7 @@ abstract class AndroidUIController<T : UI<*>> protected constructor(
 
   @CallSuper
   override fun destroy() {
+    ui?.destroyView()
     ui = null
   }
 }
