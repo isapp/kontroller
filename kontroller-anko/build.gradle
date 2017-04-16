@@ -11,12 +11,12 @@ buildscript {
 }
 
 android {
-  compileSdkVersion 25
-  buildToolsVersion "25.0.2"
+  compileSdkVersion rootProject.ext.compileSdk
+  buildToolsVersion rootProject.ext.buildToolsVersion
 
   defaultConfig {
-    minSdkVersion 15
-    targetSdkVersion 25
+    minSdkVersion rootProject.ext.minSdk
+    targetSdkVersion rootProject.ext.targetSdk
     versionCode 1
     versionName "1.0"
 
@@ -44,12 +44,12 @@ android {
 //}
 
 dependencies {
-  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  compile "org.jetbrains.anko:anko-common:0.9"
+  compile deps.kotlin
+  compile deps.anko
 
   compile project(":kontroller-android")
 
-  testCompile 'junit:junit:4.12'
+  testCompile deps.junit
 }
 
 apply from: "https://raw.githubusercontent.com/eygraber/bintray-gradle-scripts/master/bintray.gradle"

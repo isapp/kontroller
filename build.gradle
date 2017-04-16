@@ -1,15 +1,13 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-  ext.kotlin_version = '1.1.1'
-
   repositories {
     jcenter()
   }
 
   dependencies {
     classpath 'com.android.tools.build:gradle:2.3.0'
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.1'
     // classpath 'org.jetbrains.dokka:dokka-android-gradle-plugin:0.9.13'
   }
 }
@@ -29,6 +27,29 @@ allprojects {
 task clean(type: Delete) {
   delete rootProject.buildDir
 }
+
+ext {
+  kotlinVersion = '1.1.1'
+  supportLibVersion = '25.3.1'
+  ankoVersion = '0.10.0-beta-2'
+
+  buildToolsVersion = '25.0.2'
+  compileSdk = 25
+  targetSdk = 25
+  minSdk = 15
+}
+
+ext.deps = [
+  kotlin: "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion",
+  supportFragment: "com.android.support:support-fragment:$supportLibVersion",
+  appCompat: "com.android.support:appcompat-v7:$supportLibVersion",
+  anko: "org.jetbrains.anko:anko-common:$ankoVersion",
+
+  junit: 'junit:junit:4.12',
+  robolectric: 'org.robolectric:robolectric:3.2.2',
+  mockito: 'org.mockito:mockito-core:2.7.2',
+  mockitoKotlin: 'com.nhaarman:mockito-kotlin:1.2.0'
+]
 
 project.ext.preDexLibs = !(System.getenv("CI") ?: "false" .toBoolean())
 
