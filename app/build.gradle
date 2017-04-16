@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-  compileSdkVersion 25
-  buildToolsVersion "25.0.2"
+  compileSdkVersion rootProject.ext.compileSdk
+  buildToolsVersion rootProject.ext.buildToolsVersion
   defaultConfig {
     applicationId "com.isapp.kontroller"
-    minSdkVersion 15
-    targetSdkVersion 25
+    minSdkVersion rootProject.ext.minSdk
+    targetSdkVersion rootProject.ext.targetSdk
     versionCode 1
     versionName "1.0"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -21,7 +21,7 @@ android {
 }
 
 dependencies {
-  compile 'com.android.support:appcompat-v7:25.3.0'
+  compile deps.appCompat
 
   compile project(':kontroller-android')
 }

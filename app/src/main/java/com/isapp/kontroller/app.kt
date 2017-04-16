@@ -6,13 +6,16 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 
 interface AppInterface {
   val context: Context
 }
 
-class AppUI : UI<AppInterface> {
-  override fun createView(controller: AppInterface): View {
+class AppUI(
+    override val context: Context
+) : UI<AppInterface> {
+  override fun createView(controller: AppInterface, parent: ViewGroup?): View {
     val view = LayoutInflater.from(controller.context).inflate(R.layout.activity, null)
     view.findViewById(R.id.button).setOnClickListener {
       controller.context.startActivity(Intent(controller.context, OtherActivity::class.java))
@@ -22,14 +25,14 @@ class AppUI : UI<AppInterface> {
 }
 
 class AppController(override val context: Context) : UIController<AppUI>, AppInterface {
-  override val ui = AppUI()
+  override val ui = AppUI(context)
 
   override fun uiReady() {}
   override fun navigateBack() = false
 }
 
 class OtherController(override val context: Context) : UIController<AppUI>, AppInterface {
-  override val ui = AppUI()
+  override val ui = AppUI(context)
 
   override fun uiReady() {}
   override fun navigateBack() = false

@@ -5,7 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.inOrder
+import com.nhaarman.mockito_kotlin.isNull
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.never
+import com.nhaarman.mockito_kotlin.reset
+import com.nhaarman.mockito_kotlin.verifyNoMoreInteractions
+import com.nhaarman.mockito_kotlin.whenever
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -27,7 +35,7 @@ class ControllerFragmentTest {
   fun beforeTest() {
     fragmentController = FragmentController.of(TestFragmentControllerFragment())
     whenever(mockController.ui).doReturn(mockUI)
-    whenever(mockUI.createView(any())).doReturn(mockView)
+    whenever(mockUI.createView(any(), isNull())).doReturn(mockView)
   }
 
   @Test
@@ -37,7 +45,7 @@ class ControllerFragmentTest {
     inOrder(mockController, mockUI) {
       verify(mockController).initialize()
       verify(mockController).ui
-      verify(mockUI).createView(mockController)
+      verify(mockUI).createView(mockController, null)
       verify(mockController).uiReady()
     }
 
@@ -46,13 +54,13 @@ class ControllerFragmentTest {
 
   @Test
   fun onCreateView_ifThereIsNoView_callsInitialize_thenCreateView_butNotUIReady() {
-    whenever(mockUI.createView(any())).doReturn(null as View?)
+    whenever(mockUI.createView(any(), isNull())).doReturn(null as View?)
     fragmentController.create().start()
 
     inOrder(mockController, mockUI) {
       verify(mockController).initialize()
       verify(mockController).ui
-      verify(mockUI).createView(mockController)
+      verify(mockUI).createView(mockController, null)
       verify(mockController, never()).uiReady()
     }
 
@@ -66,7 +74,7 @@ class ControllerFragmentTest {
     inOrder(mockController, mockUI) {
       verify(mockController).initialize()
       verify(mockController).ui
-      verify(mockUI).createView(mockController)
+      verify(mockUI).createView(mockController, null)
       verify(mockController).uiReady()
       verify(mockController).start()
     }
@@ -81,7 +89,7 @@ class ControllerFragmentTest {
     inOrder(mockController, mockUI) {
       verify(mockController).initialize()
       verify(mockController).ui
-      verify(mockUI).createView(mockController)
+      verify(mockUI).createView(mockController, null)
       verify(mockController).uiReady()
       verify(mockController).start()
       verify(mockController).navigateBack()
@@ -97,7 +105,7 @@ class ControllerFragmentTest {
     inOrder(mockController, mockUI) {
       verify(mockController).initialize()
       verify(mockController).ui
-      verify(mockUI).createView(mockController)
+      verify(mockUI).createView(mockController, null)
       verify(mockController).uiReady()
       verify(mockController).start()
       verify(mockController).stop()
@@ -113,7 +121,7 @@ class ControllerFragmentTest {
     inOrder(mockController, mockUI) {
       verify(mockController).initialize()
       verify(mockController).ui
-      verify(mockUI).createView(mockController)
+      verify(mockUI).createView(mockController, null)
       verify(mockController).uiReady()
       verify(mockController).start()
       verify(mockController).stop()
@@ -129,7 +137,7 @@ class ControllerFragmentTest {
     inOrder(mockController, mockUI) {
       verify(mockController).initialize()
       verify(mockController).ui
-      verify(mockUI).createView(mockController)
+      verify(mockUI).createView(mockController, null)
       verify(mockController).uiReady()
       verify(mockController).start()
       verify(mockController).stop()

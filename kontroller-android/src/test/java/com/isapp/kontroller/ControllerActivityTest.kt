@@ -3,7 +3,15 @@ package com.isapp.kontroller
 import android.app.Activity
 import android.os.Bundle
 import android.view.View
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.inOrder
+import com.nhaarman.mockito_kotlin.isNull
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.never
+import com.nhaarman.mockito_kotlin.reset
+import com.nhaarman.mockito_kotlin.verifyNoMoreInteractions
+import com.nhaarman.mockito_kotlin.whenever
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -26,7 +34,7 @@ class ControllerActivityTest {
   fun beforeTest() {
     activityController = Robolectric.buildActivity(TestActivityControllerActivity::class.java)
     whenever(mockController.ui).doReturn(mockUI)
-    whenever(mockUI.createView(any())).doReturn(mockView)
+    whenever(mockUI.createView(any(), isNull())).doReturn(mockView)
   }
 
   @Test
@@ -36,7 +44,7 @@ class ControllerActivityTest {
     inOrder(mockController, mockUI) {
       verify(mockController).initialize()
       verify(mockController).ui
-      verify(mockUI).createView(mockController)
+      verify(mockUI).createView(mockController, null)
       verify(mockController).uiReady()
     }
 
@@ -45,13 +53,13 @@ class ControllerActivityTest {
 
   @Test
   fun onCreate_ifThereIsNoView_callsInitialize_thenCreateView_butNotUIReady() {
-    whenever(mockUI.createView(any())).doReturn(null as View?)
+    whenever(mockUI.createView(any(), isNull())).doReturn(null as View?)
     activityController.create()
 
     inOrder(mockController, mockUI) {
       verify(mockController).initialize()
       verify(mockController).ui
-      verify(mockUI).createView(mockController)
+      verify(mockUI).createView(mockController, null)
       verify(mockController, never()).uiReady()
     }
 
@@ -65,7 +73,7 @@ class ControllerActivityTest {
     inOrder(mockController, mockUI) {
       verify(mockController).initialize()
       verify(mockController).ui
-      verify(mockUI).createView(mockController)
+      verify(mockUI).createView(mockController, null)
       verify(mockController).uiReady()
     }
 
@@ -79,7 +87,7 @@ class ControllerActivityTest {
     inOrder(mockController, mockUI) {
       verify(mockController).initialize()
       verify(mockController).ui
-      verify(mockUI).createView(mockController)
+      verify(mockUI).createView(mockController, null)
       verify(mockController).uiReady()
       verify(mockController).start()
     }
@@ -94,7 +102,7 @@ class ControllerActivityTest {
     inOrder(mockController, mockUI) {
       verify(mockController).initialize()
       verify(mockController).ui
-      verify(mockUI).createView(mockController)
+      verify(mockUI).createView(mockController, null)
       verify(mockController).uiReady()
       verify(mockController).start()
       verify(mockController).navigateBack()
@@ -110,7 +118,7 @@ class ControllerActivityTest {
     inOrder(mockController, mockUI) {
       verify(mockController).initialize()
       verify(mockController).ui
-      verify(mockUI).createView(mockController)
+      verify(mockUI).createView(mockController, null)
       verify(mockController).uiReady()
       verify(mockController).start()
       verify(mockController).stop()
@@ -126,7 +134,7 @@ class ControllerActivityTest {
     inOrder(mockController, mockUI) {
       verify(mockController).initialize()
       verify(mockController).ui
-      verify(mockUI).createView(mockController)
+      verify(mockUI).createView(mockController, null)
       verify(mockController).uiReady()
       verify(mockController).start()
       verify(mockController).stop()
@@ -142,7 +150,7 @@ class ControllerActivityTest {
     inOrder(mockController, mockUI) {
       verify(mockController).initialize()
       verify(mockController).ui
-      verify(mockUI).createView(mockController)
+      verify(mockUI).createView(mockController, null)
       verify(mockController).uiReady()
       verify(mockController).start()
       verify(mockController).stop()
