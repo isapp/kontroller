@@ -10,11 +10,6 @@ import org.jetbrains.anko.UI
  */
 interface AnkoUI<in T> : UI<T> {
   /**
-   * The [Context] that will be used to create the [AnkoContext].
-   */
-  val context: Context
-
-  /**
    * A convenience function for creating an [AnkoContext].
    *
    * ```
